@@ -7,3 +7,4 @@ dist/
 proxy/node_modules/
 proxy/.wrangler/
 *.log
+.vercel
