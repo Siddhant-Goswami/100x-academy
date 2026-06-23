@@ -1,0 +1,15 @@
+---
+// Names the concept after it has been derived. This is "derive before name" made
+// structural: the primitive and its one-line mental model appear only here, last.
+interface Props {
+  name: string;
+}
+const { name } = Astro.props;
+---
+<aside class="ped-primitive">
+  <span class="ped-label">The primitive</span>
+  <h4 class="ped-primitive-name">{name}</h4>
+  <div class="ped-body">
+    <slot />
+  </div>
+</aside>

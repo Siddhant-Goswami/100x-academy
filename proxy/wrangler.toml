@@ -1,0 +1,12 @@
+name = "100x-proxy"
+main = "src/index.ts"
+compatibility_date = "2024-10-01"
+
+# Per-student daily token ceiling. Bill ceiling = DAILY_TOKEN_CAP x active students.
+[vars]
+DAILY_TOKEN_CAP = "100000"
+
+# Secrets (set with `wrangler secret put <NAME>`, never commit):
+#   ANTHROPIC_API_KEY
+#   SUPABASE_URL
+#   SUPABASE_SERVICE_ROLE_KEY

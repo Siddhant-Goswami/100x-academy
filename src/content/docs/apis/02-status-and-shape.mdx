@@ -1,0 +1,72 @@
+---
+title: "Deciding whether the body is real"
+module: apis
+order: 2
+objective: "Student can branch on a response status before reading its body."
+runtime: python
+difficulty: 2
+est_minutes: 10
+primitive: "The status gates the body"
+needs_llm: false
+packages: []
+verifier:
+  type: unit
+  setup: |
+    # injected mock: get(url) returns a response whose status depends on the url
+    class _Resp:
+        def __init__(self, payload, status=200):
+            self._payload = payload; self.status_code = status
+        def json(self): return self._payload
+    _DB = {"/users/7": {"id": 7, "name": "Aarav"}}
+    def get(url):
+        return _Resp(_DB.get(url, {}), 200 if url in _DB else 404)
+  cases:
+    - call: "exists('/users/7')"
+      expect: true
+    - call: "exists('/missing')"
+      expect: false
+  hidden_cases:
+    - call: "exists('/users/404')"
+      expect: false
+  on_fail_hint: "A missing user comes back as a 404, not a 200. Compare status_code to 200 and return the boolean, do not read the body."
+---
+
+import Problem from '../../../components/Problem.astro';
+import Concept from '../../../components/Concept.astro';
+import Exercise from '../../../components/Exercise.astro';
+import Hints from '../../../components/Hints.astro';
+import Primitive from '../../../components/Primitive.astro';
+
+<Problem>
+You wrote code that reads a field off a response and it worked, until the day the
+record was not there. Then the body came back empty and your code blew up reading
+a key that did not exist. The reply was honest about it: the status said 404. Your
+code just never looked. You need a check that decides, before touching the body,
+whether there is a body worth touching.
+</Problem>
+
+<Concept>
+The status code is a gate. A 200 means the body is yours to read. A 404 means
+there is nothing behind it. Reading the body without checking the status is how
+code breaks the first time something is missing. So the shape is: get the
+response, compare the status to 200, and let that decide what you do next.
+</Concept>
+
+<Exercise starter={`
+def exists(url):
+    # 1. call get(url)
+    # 2. return True if the status code is 200, otherwise False
+    pass
+`} />
+
+<Hints hints={[
+  "Store the response from get(url) before you inspect it.",
+  "Compare response.status_code to 200.",
+  "That comparison already is a boolean. You can return it directly.",
+]} />
+
+<Primitive name="The status gates the body">
+Check the status before you read the body, every time. The status is the only
+thing that tells you the body is real. Code that skips the gate is code that
+trusts data that may not be there.
+</Primitive>

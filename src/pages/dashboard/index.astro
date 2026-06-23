@@ -1,0 +1,14 @@
+---
+// Staff dashboard. A StarlightPage so it inherits the site chrome and CSS, with a
+// client-only React island doing all the authenticated Supabase reads. Static
+// output: nothing here runs on a server.
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import Dashboard from '../../components/Dashboard.tsx';
+---
+<StarlightPage frontmatter={{ title: 'Staff dashboard', template: 'splash' }}>
+  <p>
+    Instructor and TA view. You see only the cohorts you staff. Students never see
+    this page's data: Row Level Security scopes every read server-side.
+  </p>
+  <Dashboard client:only="react" />
+</StarlightPage>

@@ -1,0 +1,71 @@
+---
+title: "Pulling one value out of a response"
+module: apis
+order: 3
+objective: "Student can call a JSON endpoint and return a single transformed field."
+runtime: python
+difficulty: 2
+est_minutes: 12
+primitive: "The request and response contract"
+needs_llm: false
+packages: []
+verifier:
+  type: unit
+  setup: |
+    # injected mock: get(url) returns a fixed response object
+    import json
+    class _Resp:
+        def __init__(self, payload, status=200):
+            self._payload = payload; self.status_code = status
+        def json(self): return self._payload
+    _DB = {"/users/7": {"id": 7, "name": "Aarav", "city": "Bengaluru"}}
+    def get(url):
+        return _Resp(_DB.get(url, {}), 200 if url in _DB else 404)
+  cases:
+    - call: "city_of('/users/7')"
+      expect: "Bengaluru"
+  hidden_cases:
+    - call: "city_of('/users/0')"
+      expect: null
+  on_fail_hint: "What should your function return when the user does not exist? Check the status code before reading the body."
+---
+
+import Problem from '../../../components/Problem.astro';
+import Concept from '../../../components/Concept.astro';
+import Exercise from '../../../components/Exercise.astro';
+import Hints from '../../../components/Hints.astro';
+import Primitive from '../../../components/Primitive.astro';
+
+<Problem>
+You have a service that returns a user as JSON. The page only needs the city.
+Right now you are printing the whole object and reading it by eye. That does not
+scale to a thousand users. You need code that asks for one user and hands back
+one field, and that does something sensible when the user is missing.
+</Problem>
+
+<Concept>
+A response is not just data. It carries a status that tells you whether the data
+is even there. A 200 means the body is yours to read. A 404 means there is no
+body worth reading. So the shape of correct code is: call, check the status,
+then read the field.
+</Concept>
+
+<Exercise starter={`
+def city_of(url):
+    # 1. call get(url)
+    # 2. if the status is not 200, return None
+    # 3. otherwise return the "city" field
+    pass
+`} />
+
+<Hints hints={[
+  "Call get(url) and store the response before you do anything with it.",
+  "Read response.status_code first. Only touch response.json() on a 200.",
+  "response.json() gives a dict. Return its \"city\" key.",
+]} />
+
+<Primitive name="The request and response contract">
+Every call returns a status and a body. The status decides whether the body is
+real. Code that reads the body without checking the status is code that breaks
+the first time something is missing.
+</Primitive>

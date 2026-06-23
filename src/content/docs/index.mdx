@@ -1,0 +1,32 @@
+---
+title: 100x Interactive
+description: Browser-first interactive exercises with grading and progress tracking.
+template: splash
+hero:
+  tagline: Learn by doing. Code runs and grades in your browser. Progress is saved.
+  actions:
+    - text: Start the APIs module
+      link: /apis/01-why-http/
+      icon: right-arrow
+      variant: primary
+    - text: Staff dashboard
+      link: /dashboard/
+      icon: bars
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Runs in the browser" icon="rocket">
+    Python executes in a Pyodide Web Worker. No backend, no install, free to host.
+  </Card>
+  <Card title="Graded as you go" icon="approve-check">
+    Deterministic verifiers check your work the moment you run it.
+  </Card>
+  <Card title="Problem before solution" icon="open-book">
+    Every lesson makes you feel the need before it names the idea.
+  </Card>
+  <Card title="Staff can see who is stuck" icon="information">
+    Progress, attempts, and time land in Supabase for TAs and instructors.
+  </Card>
+</CardGrid>

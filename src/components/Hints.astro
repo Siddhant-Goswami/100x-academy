@@ -1,0 +1,15 @@
+---
+// MDX-facing wrapper for progressive hints. The author passes a `hints` array;
+// the lesson slug is read from the route so reveals can be telemetered.
+import HintsIsland from './Hints.tsx';
+
+interface Props {
+  hints: string[];
+}
+const { hints } = Astro.props;
+const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, '');
+---
+<section class="ped-hints">
+  <span class="ped-label">Hints</span>
+  <HintsIsland client:visible lessonSlug={slug} hints={hints} />
+</section>

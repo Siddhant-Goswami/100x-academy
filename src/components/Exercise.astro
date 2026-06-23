@@ -1,0 +1,25 @@
+---
+// MDX-facing wrapper. The author only writes the starter code in MDX; the lesson
+// slug, verifier spec, and package list come from the lesson's own frontmatter,
+// looked up via the content collection by the slug derived from the page URL.
+// Renders the React island client-side (Pyodide is browser-only).
+import { getCollection } from 'astro:content';
+import ExerciseIsland from './Exercise.tsx';
+
+interface Props {
+  starter: string;
+}
+const { starter } = Astro.props;
+
+const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, '');
+const docs = await getCollection('docs');
+const entry = docs.find((e) => e.slug === slug);
+const data = (entry?.data ?? {}) as { verifier?: Record<string, unknown>; packages?: string[] };
+---
+<ExerciseIsland
+  client:only="react"
+  lessonSlug={slug}
+  starter={starter}
+  verifier={data.verifier ?? { type: 'stdout' }}
+  packages={data.packages ?? []}
+/>

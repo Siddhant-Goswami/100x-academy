@@ -1,0 +1,63 @@
+---
+title: "Asking another machine for data"
+module: apis
+order: 1
+objective: "Student can issue a request and read the status line of the response."
+runtime: python
+difficulty: 1
+est_minutes: 8
+primitive: "Request out, response back"
+needs_llm: false
+packages: []
+verifier:
+  type: stdout
+  expected_stdout: "200"
+  setup: |
+    # injected mock: get(url) returns a fixed response object with a status code
+    class _Resp:
+        def __init__(self, status=200):
+            self.status_code = status
+    def get(url):
+        return _Resp(200 if url == "/ping" else 404)
+  on_fail_hint: "get(url) hands back a response object, not a number. The status lives on it as .status_code."
+---
+
+import Problem from '../../../components/Problem.astro';
+import Concept from '../../../components/Concept.astro';
+import Exercise from '../../../components/Exercise.astro';
+import Hints from '../../../components/Hints.astro';
+import Primitive from '../../../components/Primitive.astro';
+
+<Problem>
+The data your page needs lives on another machine. You cannot reach into that
+machine and read its memory. All you can do is send it a message and wait for one
+back. Before you trust anything in the reply, you need to know one thing: did the
+other machine even agree to answer? That single fact decides whether the rest of
+the reply is worth reading.
+</Problem>
+
+<Concept>
+A request goes out, a response comes back. The first thing the response tells you
+is a status code, a small number that says how the request went. 200 means the
+machine answered and the data is there. Anything else means read no further until
+you have handled it. So the very first move with any response is to look at its
+status.
+</Concept>
+
+<Exercise starter={`
+# get("/ping") returns a response object.
+# Print the status code of that response (just the number).
+response = get("/ping")
+`} />
+
+<Hints hints={[
+  "Call get(\"/ping\") and keep the response in a variable.",
+  "The number you want is response.status_code.",
+  "print(response.status_code) outputs just the number.",
+]} />
+
+<Primitive name="Request out, response back">
+You never read another machine's data directly. You send a request and read a
+response. The response opens with a status code, and that code is what tells you
+whether the rest of the response means anything.
+</Primitive>
